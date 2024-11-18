@@ -1,0 +1,10 @@
+stages:          # List of stages for jobs, and their order of execution
+  - build
+  - test
+  - doc
+  - deploy
+
+include:
+  - component: $CI_SERVER_FQDN/components/rust/test@0.1.0
+  - component: $CI_SERVER_FQDN/components/rust/doc@0.1.0
+  - component: $CI_SERVER_FQDN/components/rust/build@0.1.0
