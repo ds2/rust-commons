@@ -2,6 +2,17 @@
 
 Frequently used Rust code snippets.
 
+== Usage
+
+You can add this lib via Cargo.toml:
+
+[,toml]
+----
+[dependencies]
+rust-commons = { git = "https://github.com/ds2/rust-commons.git", branch = "main" }
+----
+
+
 == How to build
 
 [,shell]
