@@ -1,0 +1,23 @@
+[package]
+name = "ds2-rust-commons"
+version = "0.1.0"
+edition = "2021"
+license = "GPL-3.0-or-later"
+description = "Common code for Rust"
+authors = ["Dirk Strauss <cpv5fhsq9@mozmail.com>"]
+readme = "README.adoc"
+
+[dependencies]
+chrono = { version = "0.4.38", features = ["serde"], optional = true }
+tracing = "0.1.40"
+
+[profile.dev]
+opt-level = 0
+
+[profile.release]
+opt-level = 3
+lto = true
+debug = 1
+
+[features]
+durations = ["chrono/serde"]

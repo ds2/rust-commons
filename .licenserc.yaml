@@ -1,0 +1,64 @@
+# touch .licenserc.yaml
+header:
+  license:
+    spdx-id: GPL-3.0-or-later
+    copyright-owner: DS/2, Dirk Strauss
+    software-name: Common Rust stuff
+
+  paths-ignore:
+    - "dist"
+    - "Makefile"
+    - "PROJECT"
+    - "**/*.txt"
+    - "config/**/*.yaml"
+    - "licenses"
+    - "go.mod"
+    - "go.sum"
+    - "LICENSE"
+    - "NOTICE"
+    - "CHANGELOG*"
+    - ".*/**"
+    - ".*"
+    - ".github"
+    - "**/.*"
+    - "**/*.md"
+    - "**/*.proto"
+    - "**/*.pb.go"
+    - "**/*.adoc"
+    - "**/*.spec"
+    - "**/*.toml"
+    - "**/*.lock"
+    - "**/*.dapper"
+    - "**/*.sh"
+    - "**/*.spdx"
+    - "**/*.env"
+    - "**/*.json"
+    - "**/*Containerfile"
+    - "**/*Dockerfile"
+    - "**/*.bazel"
+    - "**/*.service"
+    - "**/*.repo"
+    - "**/liquibase.*.flow"
+    - "**/generated/*"
+    - "**/node_modules/**"
+    - "**/debian.control"
+    - "renovate.json"
+
+  comment: on-failure
+
+dependency:
+  files:
+    - Cargo.toml
+  # licenses:
+  #   - name: github.com/chzyer/logex
+  #     version: v1.1.10
+  #     license: MIT
+  #   - name: github.com/kr/logfmt
+  #     version: v0.0.0-20140226030751-b84e30acd515
+  #     license: MIT
+  #   - name: github.com/munnerz/goautoneg # TODO find out what this dep is being used for
+  #     version: v0.0.0-20120707110453-a547fc61f48d
+  #     license: MIT
+  #   - name: github.com/pascaldekloe/goe
+  #     version: v0.0.0-20180627143212-57f6aae5913c
+  #     license: CC0-1.0

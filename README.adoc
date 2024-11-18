@@ -1,0 +1,10 @@
+= Common Rust stuff
+
+Frequently used Rust code snippets.
+
+== How to build
+
+[,shell]
+----
+cargo build --release --all-features --tests
+----
