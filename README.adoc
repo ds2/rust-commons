@@ -6,5 +6,12 @@ Frequently used Rust code snippets.
 
 [,shell]
 ----
-cargo build --release --all-features --tests
+cargo build --all-features --tests
+----
+
+== Running the unit tests
+
+[,shell]
+----
+cargo test --all-features -- --nocapture
 ----
