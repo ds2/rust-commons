@@ -27,22 +27,24 @@ use tracing::debug;
 ///
 /// returns: Result<String, Box<dyn Error, Global>>
 ///
-pub fn format_duration(d: Duration) -> Result<String, RstCmnsError> {
-    debug!("Will try to render duration: {}", d);
+pub fn format_duration(durr: Duration) -> Result<String, RstCmnsError> {
+    debug!("Will try to render duration: {}", durr);
     let mut s = String::new();
-    if d.is_zero() {
+    if durr.is_zero() {
         debug!("The given duration is zero, will not render anything!");
         return Ok(s);
     }
-    let weeks = d.num_weeks();
-    let days = d.num_days() - d.num_weeks() * 7;
-    let hours = d.num_hours() - d.num_days() * 24;
-    let rounded_minutes = d.num_minutes() - d.num_hours() * 60;
-    let rounded_seconds = d.num_seconds() - d.num_minutes() * 60;
-    let rounded_millis = d.num_milliseconds() - d.num_seconds() * 1000;
-    let rounded_micros = d.num_microseconds().unwrap_or_default() - d.num_milliseconds() * 1000;
-    let rounded_nanos =
-        d.num_nanoseconds().unwrap_or_default() - d.num_microseconds().unwrap_or_default() * 1000;
+    let d_abs = durr.abs();
+    let weeks = d_abs.num_weeks();
+    let days = d_abs.num_days() - d_abs.num_weeks() * 7;
+    let hours = d_abs.num_hours() - d_abs.num_days() * 24;
+    let rounded_minutes = d_abs.num_minutes() - d_abs.num_hours() * 60;
+    let rounded_seconds = d_abs.num_seconds() - d_abs.num_minutes() * 60;
+    let rounded_millis = d_abs.num_milliseconds() - d_abs.num_seconds() * 1000;
+    let rounded_micros =
+        d_abs.num_microseconds().unwrap_or_default() - d_abs.num_milliseconds() * 1000;
+    let rounded_nanos = d_abs.num_nanoseconds().unwrap_or_default()
+        - d_abs.num_microseconds().unwrap_or_default() * 1000;
     debug!(
         "We have the following numbers now: w={}, d={}, h={}, m={}, s={}, ms={}, micros={}, ns={}",
         weeks,
@@ -97,12 +99,39 @@ pub fn format_duration(d: Duration) -> Result<String, RstCmnsError> {
 #[cfg(test)]
 mod tests {
     use crate::durations::format_duration;
-    use chrono::Duration;
+    use chrono::{DateTime, Duration, Utc};
+    use pretty_assertions::assert_eq;
     use std::error::Error;
     use std::ops::Add;
+    use std::sync::Once;
+    use tracing::info;
+    use tracing::level_filters::LevelFilter;
+    use tracing_subscriber::prelude::*;
+
+    static INIT: Once = Once::new();
+
+    pub(crate) fn setup_loggers() {
+        // some setup code, like creating required files/directories, starting
+        // servers, etc.
+        println!("Would setup servers here..");
+        INIT.call_once(|| {
+            tracing_subscriber::registry()
+                .with(tracing_subscriber::fmt::layer())
+                // Use RUST_LOG environment variable to set the tracing level
+                .with(
+                    tracing_subscriber::EnvFilter::builder()
+                        .with_default_directive(LevelFilter::INFO.into())
+                        .from_env_lossy(),
+                )
+                // Sets this to be the default, global collector for this application.
+                .init();
+            info!("Logger should be enabled now!");
+        });
+    }
 
     #[test]
     fn test_format_seconds() -> Result<(), Box<dyn Error>> {
+        setup_loggers();
         let dur = Duration::seconds(5);
         let s1 = format_duration(dur)?;
         assert_eq!(s1, "5s");
@@ -110,6 +139,7 @@ mod tests {
     }
     #[test]
     fn test_format_default_duration() -> Result<(), Box<dyn Error>> {
+        setup_loggers();
         let dur = Duration::default();
         let s1 = format_duration(dur)?;
         assert_eq!(s1, "");
@@ -118,6 +148,7 @@ mod tests {
 
     #[test]
     fn test_format_seconds_with_millis() -> Result<(), Box<dyn Error>> {
+        setup_loggers();
         let dur = Duration::seconds(5).add(Duration::milliseconds(123));
         let s1 = format_duration(dur)?;
         assert_eq!(s1, "5s, 123ms");
@@ -126,6 +157,7 @@ mod tests {
 
     #[test]
     fn test_format_minutes() -> Result<(), Box<dyn Error>> {
+        setup_loggers();
         let dur = Duration::minutes(5);
         let s1 = format_duration(dur)?;
         assert_eq!(s1, "5m");
@@ -134,6 +166,7 @@ mod tests {
 
     #[test]
     fn test_format_minutes_with_seconds() -> Result<(), Box<dyn Error>> {
+        setup_loggers();
         let dur = Duration::minutes(5).add(Duration::seconds(23));
         let s1 = format_duration(dur)?;
         assert_eq!(s1, "5m, 23s");
@@ -142,11 +175,23 @@ mod tests {
 
     #[test]
     fn test_format_hours_with_minutes_with_seconds() -> Result<(), Box<dyn Error>> {
+        setup_loggers();
         let dur = Duration::hours(1)
             .add(Duration::minutes(23))
             .add(Duration::seconds(45));
         let s1 = format_duration(dur)?;
         assert_eq!(s1, "1h, 23m, 45s");
+        Ok(())
+    }
+
+    #[test]
+    fn test_format_chrono_timedelta() -> Result<(), Box<dyn Error>> {
+        setup_loggers();
+        let d1: DateTime<Utc> = DateTime::parse_from_rfc3339("2023-07-21T12:34:56Z")?.to_utc();
+        let d2 = DateTime::parse_from_rfc3339("2023-07-21T12:44:56Z")?.to_utc();
+        let dur = d1.signed_duration_since(d2);
+        let s1 = format_duration(dur)?;
+        assert_eq!(s1, "10m");
         Ok(())
     }
 }
