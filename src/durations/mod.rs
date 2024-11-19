@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+use crate::RstCmnsError;
 use chrono::Duration;
-use std::error::Error;
 use tracing::debug;
 
 /// Formats a duration as a human-readable string.
@@ -27,7 +27,7 @@ use tracing::debug;
 ///
 /// returns: Result<String, Box<dyn Error, Global>>
 ///
-pub fn format_duration(d: Duration) -> Result<String, Box<dyn Error>> {
+pub fn format_duration(d: Duration) -> Result<String, RstCmnsError> {
     debug!("Will try to render duration: {}", d);
     let mut s = String::new();
     if d.is_zero() {

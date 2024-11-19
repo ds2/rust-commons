@@ -17,3 +17,9 @@
 
 #[cfg(feature = "durations")]
 pub mod durations;
+
+#[derive(thiserror::Error, Debug)]
+pub enum RstCmnsError {
+    #[error("Invalid duration: {}", _0)]
+    InvalidDuration(String),
+}
