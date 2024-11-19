@@ -9,7 +9,7 @@ You can add this lib via Cargo.toml:
 [,toml]
 ----
 [dependencies]
-rust-commons = { git = "https://gitlab.com/ds_2/rust-commons.git", branch = "main" }
+rust-commons = { git = "https://gitlab.com/ds_2/rust-commons.git", branch = "main", features = ["durations"] }
 ----
 
 
